@@ -35,17 +35,39 @@ const transactions = [
     }
 ]
 
-const Transactions = {
+const Transaction = {
+    all: transactions,
+
     incomes() {
-        //Add the intakes
+        let income = 0
+        // pegar todas as transações
+        // para cada transação se ela for maior do que zero
+        Transaction.all.forEach(transaction => {
+            // se for maior que zero
+            if (transaction.amount > 0) {
+                // somar a uma variável e retorná-la 
+                income += transaction.amount;
+            }
+        })
+        return income
     },
 
     expenses() {
-        //Add the outputs
+        let expense = 0
+        // pegar todas as transações
+        // para cada transação se ela for menor do que zero
+        Transaction.all.forEach(transaction => {
+            // se for menor que zero
+            if (transaction.amount < 0) {
+                // somar a uma variável e retorná-la 
+                expense += transaction.amount;
+            }
+        })
+        return expense 
     },
 
     total() {
-
+        return Transaction.incomes() + Transaction.expenses() 
     }
 }
 
@@ -63,7 +85,7 @@ const DOM = {
 
         const html = `
         <td class="description">${transaction.description}</td>
-        <td class="${CSSclass}">${transaction.amount}</td>
+        <td class="${CSSclass}">${amount}</td>
         <td class="date">${transaction.date}</td>
         <td>
             <img src="./assets/minus.svg" alt="Remover transação">
@@ -71,15 +93,36 @@ const DOM = {
         `
 
         return html
+    },
+
+    updateBalance() {
+        document.getElementById('incomeDisplay').innerHTML = Utils.formatCurrency.Transaction.incomes()
+        document.getElementById('expenseDisplay').innerHTML = Utils.formatCurrency.Transaction.expenses()
+        document.getElementById('totalDisplay').innerHTML = Utils.formatCurrency.Transaction.total()
     }
 }
 
 const Utils = {
+    
     formatCurrency(value) {
-        const signal = Number(value) < 0 ? "-" : "+"
+        // Aqui pegamos o valor e trabalhamos o sinal 
+        const signal = Number(value) < 0 ? "-" : ""
+        // Regex ou expressão regular para remoção de qualquer caractere especial
+        value = String(value).replace(/\D/g, "")
+        // Como ele é guardado multiplicado por 100, aqui o valor volta ao "estado original"
+        value = Number(value) / 100
+        // Formata como dinheiro
+        value = value.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        })
+        // Devolve o valor formatado com o respectivo sinal 
+        return signal + value
     }
 }
 
 transactions.forEach(function(transaction) {
     DOM.addTransaction(transaction)
 })
+
+DOM.updateBalance()
