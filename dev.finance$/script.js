@@ -12,34 +12,42 @@ const Modal = {
     //Search about toggle function
 }
 
-const transactions = [
-    {
-        id: 1,
-        description: 'Luz',
-        amount: -50000,
-        date: '12/04/2021'
-    }, 
-    
-    {
-        id: 2,
-        description: 'Website',
-        amount: 500000,
-        date: '12/04/2021'
-    },
-    
-    {
-        id: 3,
-        description: 'Internet',
-        amount: -20000,
-        date: '12/04/2021'
-    }
-]
 
 const Transaction = {
-    all: transactions,
+    all: [
+        {
+            description: 'Luz',
+            amount: -50000,
+            date: '12/04/2021'
+        }, 
+        
+        {
+            description: 'Website',
+            amount: 500000,
+            date: '12/04/2021'
+        },
+        
+        {
+            description: 'Internet',
+            amount: -20000,
+            date: '12/04/2021'
+        },
+    
+        {
+            description: 'App',
+            amount: 200000,
+            date: '12/04/2021'
+        },
+    ],
     
     add(transaction) {
         Transaction.all.push(transaction)
+
+        App.reload()
+    },
+
+    remove(index) {
+        Transaction.all.splice(index, 1)
 
         App.reload()
     },
@@ -131,6 +139,54 @@ const Utils = {
     }
 }
 
+const Form = {
+    //elemento inteiro do html
+    description: document.querySelector('input#description'),
+    amount: document.querySelector('input#amount'),
+    date: document.querySelector('input#date'),
+    //só os valores para verificar se eles estarão ou não vazios
+    getValues() {
+        return {
+            description: Form.description.value,
+            amount: Form.amount.value,
+            date: Form.date.value
+        }
+    },
+
+    validateFields() {
+        const { description, amount, date } = Form.getValues()
+
+        if (description.trim() === "" || amount.trim() === "" || date.trim() === "") {
+            throw new Error("Por favor, preencha todos os campos")
+        }
+    },
+
+    formatValues() {
+        let { description, amount, date } = Form.getValues()
+
+        amount = Utils.formatAmount(amount)
+    },
+
+    submit(event) {
+        event.preventDefault()
+
+
+        try {
+            // verificar se todas as informações foram preenchidas
+            Form.validateFields()
+            // formatar os dados para salvar
+            Form.formatValues()
+            // salvar
+            // apagar os dados do formulário
+            // modal feche
+            // atualizar a aplicação
+
+        } catch (error) {
+            alert(error.message)
+        }
+    }
+}
+
 const App = {
     init() {
         Transaction.all.forEach(transaction => {
@@ -148,10 +204,3 @@ const App = {
  
 App.init()
 
-
-Transaction.add({
-    id: 39,
-    description: 'Alo',
-    amount: 200,
-    date: '07/05/2021'
-})
